@@ -13,6 +13,11 @@ jobs:
     steps:
     - name: Set image tag
       run: echo "IMAGE_TAG=$(date +%s)" >> $GITHUB_ENV
+    - name: Stop and remove existing container
+      run: |
+           docker stop memereact
+           docker rm memereact
+           docker rmi memereact:${{ env.IMAGE_TAG }}
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag memereact:${{ env.IMAGE_TAG }}
     - name: Deploy docker image
