@@ -14,22 +14,12 @@ jobs:
 
       - name: Stop and remove existing container (if any)
         run: |
-             if [ "$(docker ps -q -f name=memereact)" ]; then
-             echo "Stopping and removing existing container..."
-             docker stop memereact
-             docker rm memereact
-             else
-               echo "No existing container named 'memereact' to stop or remove."
-             fi
+             docker stop $(docker ps -q)
+             docker rm $(docker ps -a -q)
 
       - name: Remove old Docker image (if any)
         run: |
-             if docker images memereact:${{ env.IMAGE_TAG }} | grep -q memereact; then
-               echo "Removing old image..."
-             docker rmi memereact:${{ env.IMAGE_TAG }}
-             else
-              echo "No old image with tag memereact:${{ env.IMAGE_TAG }} found."
-             fi
+             docker images --filter=reference='memereact:*' -q | xargs docker rmi -f
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag memereact:${{ env.IMAGE_TAG }}
