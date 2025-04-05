@@ -21,6 +21,9 @@ jobs:
         run: |
              docker images --filter=reference='memereact:*' -q | xargs docker rmi -f
 
+      - name: Remove all existing images
+        run: docker system prune -af
+
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag memereact:${{ env.IMAGE_TAG }}
 
