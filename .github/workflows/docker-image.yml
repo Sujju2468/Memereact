@@ -22,17 +22,17 @@ jobs:
                echo "No existing container named 'memereact' to stop or remove."
              fi
 
-     - name: Remove old Docker image (if any)
-       run: |
-            if docker images memereact:${{ env.IMAGE_TAG }} | grep -q memereact; then
-              echo "Removing old image..."
-            docker rmi memereact:${{ env.IMAGE_TAG }}
-            else
+      - name: Remove old Docker image (if any)
+        run: |
+             if docker images memereact:${{ env.IMAGE_TAG }} | grep -q memereact; then
+               echo "Removing old image..."
+             docker rmi memereact:${{ env.IMAGE_TAG }}
+             else
               echo "No old image with tag memereact:${{ env.IMAGE_TAG }} found."
-            fi
+             fi
 
-     - name: Build the Docker image
-       run: docker build . --file Dockerfile --tag memereact:${{ env.IMAGE_TAG }}
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag memereact:${{ env.IMAGE_TAG }}
 
-     - name: Deploy docker image
-    r un: docker run -itd -p 5173:5173 --name memereact memereact:${{ env.IMAGE_TAG }}
+      - name: Deploy docker image
+        run: docker run -itd -p 5173:5173 --name memereact memereact:${{ env.IMAGE_TAG     }
