@@ -18,6 +18,9 @@ jobs:
       - name: build package
         run: npm run build
 
+      - name: remove existing build files from html folder
+        run: sudo rm -rf /var/www/html/*
+
       - name: copy build files to html folder
         run: sudo cp -r * /var/www/html/
 
