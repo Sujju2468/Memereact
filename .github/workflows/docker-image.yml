@@ -25,4 +25,4 @@ jobs:
         run: sudo chown -R www-data:www-data /var/www/html
 
       - name: Apache service restart
-        run: Sudo systemctl restart apache2.service
+        run: sudo systemctl restart apache2.service
