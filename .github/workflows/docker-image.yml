@@ -22,7 +22,7 @@ jobs:
         run: sudo rm -rf /var/www/html/*
 
       - name: copy build files to html folder
-        run: sudo cp -r * /var/www/html/
+        run: sudo cp -r dist/* /var/www/html/
 
       - name: Assign file permissions
         run: sudo chown -R www-data:www-data /var/www/html
