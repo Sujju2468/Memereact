@@ -1,31 +1,25 @@
-name: Docker Image CI
-
+name: Deploy to EC2 Pythonapp Backend Dev via SSM Testing
 on:
   push:
-    branches: [ "master" ]
-
+    branches:
+      - master
 jobs:
-  build:
-    runs-on: self-hosted
-
+  deploy:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: package installtion
-        run: npm install
-
-      - name: build package
-        run: npm run build
-
-      - name: remove existing build files from html folder
-        run: sudo rm -rf /var/www/html/*
-
-      - name: copy build files to html folder
-        run: sudo cp -r dist/* /var/www/html/
-
-      - name: Assign file permissions
-        run: sudo chown -R www-data:www-data /var/www/html
-
-      - name: Apache service restart
-        run: sudo systemctl restart apache2.service
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.EC2_DEV_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.EC2_DEV_SECRET_KEY }}
+          aws-region: ${{ secrets.EC2_REGION }}
+      - name: Deploy pythonapp Backend on EC2 via SSM
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=InstanceIds,Values=${{ secrets.EC2_DEV_INSTANCE_ID }}" \
+            --parameters commands='["cd /home/ubuntu", "bash ./deployreact.sh ${{secrets.PERSONAL_ACCESS_TOKEN}} master"]' \
+            --comment "Triggering deploy.sh via GitHub Actions" \
+            --region ${{ secrets.EC2_REGION }}
